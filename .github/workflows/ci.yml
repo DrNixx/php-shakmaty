@@ -1,0 +1,66 @@
+name: Build and Test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: Build extension and run PHP tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libclang-dev php-cli php-dev
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo artifacts
+        uses: Swatinem/rust-cache@v2
+
+      - name: Build extension (release)
+        run: cargo build --release
+
+      - name: Run PHP tests
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          EXT="$PWD/target/release/libphp_shakmaty.so"
+          if [ ! -f "$EXT" ]; then
+            echo "::error::Extension binary not found at $EXT"
+            exit 1
+          fi
+
+          failures=0
+          for test_file in tests/*.php; do
+            echo "::group::PHP test: $test_file"
+            if php -n \
+              -d zend.assertions=1 \
+              -d assert.exception=1 \
+              -d extension="$EXT" \
+              "$test_file"; then
+              echo "::notice::PASSED $test_file"
+            else
+              echo "::error::FAILED $test_file"
+              failures=$((failures + 1))
+            fi
+            echo "::endgroup::"
+          done
+
+          if [ "$failures" -ne 0 ]; then
+            echo "::error::$failures PHP test file(s) failed"
+            exit 1
+          fi
+
+          echo "All PHP test files passed."
