@@ -169,4 +169,4 @@ See [docs/examples/pgn.md](docs/examples/pgn.md) for the full walkthrough (movet
 
 ## License
 
-GPL-3.0-or-later. See [library/shakmaty/COPYING](library/shakmaty/COPYING) for the full license text of the underlying Rust crate.
+GPL-3.0-or-later. See [original library](https://github.com/niklasf/shakmaty/tree/main#license) for the full license text of the underlying Rust crate.
