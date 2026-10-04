@@ -1,0 +1,15 @@
+[package]
+name = "php_shakmaty"
+version = "0.15.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+ext-php-rs = "0.16.0"
+shakmaty = { version = "0.30", features = ["magics", "variant"] }
+pgn-reader = "0.29"
+
+[profile.release]
+strip = "debuginfo"
