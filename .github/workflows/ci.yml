@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install system dependencies
         run: |
@@ -42,14 +42,21 @@ jobs:
             exit 1
           fi
 
+          # `php -n` ignores php.ini, so extensions that are shared modules on Linux
+          # must be loaded explicitly. ctype is used by tests/step27_zobrist_polyglot.php.
+          PHP_ARGS=(-n -d zend.assertions=1 -d assert.exception=1)
+          EXT_DIR="$(php-config --extension-dir)"
+          if [ -f "$EXT_DIR/ctype.so" ]; then
+            PHP_ARGS+=(-d extension="$EXT_DIR/ctype.so")
+          else
+            PHP_ARGS+=(-d extension=ctype)
+          fi
+          PHP_ARGS+=(-d extension="$EXT")
+
           failures=0
           for test_file in tests/*.php; do
             echo "::group::PHP test: $test_file"
-            if php -n \
-              -d zend.assertions=1 \
-              -d assert.exception=1 \
-              -d extension="$EXT" \
-              "$test_file"; then
+            if php "${PHP_ARGS[@]}" "$test_file"; then
               echo "::notice::PASSED $test_file"
             else
               echo "::error::FAILED $test_file"
