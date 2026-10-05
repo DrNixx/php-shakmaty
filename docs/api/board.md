@@ -33,6 +33,7 @@ These methods query the piece on a specific square and return primitive values (
 | `pieceAt(int $sq)`  | `?string`       | Returns the piece character at square `$sq`: `'K'`, …, `'p'`. Uppercase = White, lowercase = Black. Returns **null** if the square is empty. Use Square constants: e.g. `\shakmaty\Square::E1`.  |
 | `roleAt(int $sq)`   | `?int`          | Returns the role value at square `$sq`: `1`=Pawn … `6`=King (see Role constants). Returns **null** if empty. Use Square constants: e.g. `\shakmaty\Square::E8`.  |
 | `colorAt(int $sq)`  | `?int`          | Returns the color value at square `$sq`: `0`=Black, `1`=White (see Color constants). Returns **null** if empty. Use Square constants: e.g. `\shakmaty\Square::E8`.   |
+| `legacyPieceAt(int $sq)` | `int`       | Returns the legacy 12-code at square `$sq`: White `1..6` (King=1 … Pawn=6), Black `9..14` (King=9 … Pawn=14). Returns **7** (`NOPIECE`) if the square is empty or out of range. Use Square constants: e.g. `\shakmaty\Square::E1`. |
 
 ---
 

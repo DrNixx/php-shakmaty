@@ -11,6 +11,7 @@ namespace shakmaty;
  * @method Bitboard byRole(int $roleValue) Returns bitboard of pieces of given role.
  * @method int|null roleAt(int $sq) Returns role value at square or null.
  * @method int|null colorAt(int $sq) Returns color value at square or null.
+ * @method int legacyPieceAt(int $sq) Returns legacy 12-code at square (White 1..6, Black 9..14; 7=NOPIECE).
  */
 final class Board {
     public function __construct() {}

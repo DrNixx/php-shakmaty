@@ -73,6 +73,15 @@ test("Piece role property", $wk->role->value() === \shakmaty\Role::KING);
 $bp = \shakmaty\Piece::fromChar('p');
 test("Piece::fromChar('p')", $bp->color->isBlack() && $bp->role->value() === \shakmaty\Role::PAWN);
 
+// legacyCode / fromLegacyCode (Step 3)
+test("Piece::legacyCode White King", \shakmaty\Piece::legacyCode($wk->color, $wk->role) === 1);
+test("Piece::legacyCode Black Pawn", \shakmaty\Piece::legacyCode($bp->color, $bp->role) === 14);
+test("Piece::fromLegacyCode 1 White King", (function () {
+    $p = \shakmaty\Piece::fromLegacyCode(1);
+    return $p !== null && $p->color->isWhite() && $p->role->value() === \shakmaty\Role::KING;
+})());
+test("Piece::fromLegacyCode NOPIECE null", \shakmaty\Piece::fromLegacyCode(7) === null);
+
 // ---- Step 4: Bitboard ----
 $bb = \shakmaty\Bitboard::fromSquare(\shakmaty\Square::E4);
 test("Bitboard fromSquare has E4", $bb->has(\shakmaty\Square::E4));
@@ -123,6 +132,11 @@ test("Board pawns count", $board->byRole(\shakmaty\Role::PAWN)->count() === 16);
 test("Board knights count", $board->byRole(\shakmaty\Role::KNIGHT)->count() === 4);
 test("Board roleAt E1", $board->roleAt(\shakmaty\Square::E1) === \shakmaty\Role::KING);
 test("Board colorAt E1", $board->colorAt(\shakmaty\Square::E1) === 1);
+
+// legacyPieceAt (Step 5)
+test("Board legacyPieceAt E1 (White King)", $board->legacyPieceAt(\shakmaty\Square::E1) === 1);
+test("Board legacyPieceAt E7 (Black Pawn)", $board->legacyPieceAt(\shakmaty\Square::E7) === 14);
+test("Board legacyPieceAt E4 (NOPIECE)", $board->legacyPieceAt(\shakmaty\Square::E4) === 7);
 
 $empty_board = \shakmaty\Board::empty();
 test("Board empty", $empty_board->occupied()->isEmpty());

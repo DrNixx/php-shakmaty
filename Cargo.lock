@@ -868,7 +868,7 @@ dependencies = [
 
 [[package]]
 name = "php_shakmaty"
-version = "0.15.0"
+version = "0.16.0"
 dependencies = [
  "ext-php-rs",
  "pgn-reader",

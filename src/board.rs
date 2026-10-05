@@ -88,4 +88,18 @@ impl PhpBoard {
         }
         None
     }
+
+    /// Returns the legacy 12-code of the piece on the given square.
+    ///
+    /// White codes 1..6 (King=1 … Pawn=6); black codes 9..14 (King=9 … Pawn=14).
+    /// Returns `7` (NOPIECE) for an empty square or an out-of-range square index.
+    pub fn legacy_piece_at(&self, sq: i32) -> i32 {
+        if let Ok(s) = Square::try_from(sq as u8) {
+            if let Some(p) = self.inner.piece_at(s) {
+                let color_bit = if p.color == Color::Black { 1 } else { 0 };
+                return (color_bit << 3) | (7 - p.role as i32);
+            }
+        }
+        7
+    }
 }

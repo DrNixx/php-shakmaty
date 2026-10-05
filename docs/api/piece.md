@@ -53,6 +53,8 @@ new \shakmaty\Piece(int $color, int $role)
 | Method                              | Return Type     | Description                                              |
 |-------------------------------------|-----------------|----------------------------------------------------------|
 | `\shakmaty\Piece::fromChar(string $ch)` | `?\shakmaty\Piece` | Parses a single piece character (upper or lower case) into the corresponding Piece. Returns `null` if unrecognized.  |
+| `\shakmaty\Piece::legacyCode(\shakmaty\Color $color, \shakmaty\Role $role)` | `int` | Converts a color+role pair to the legacy 12-code encoding (White `1..6`, Black `9..14`). |
+| `\shakmaty\Piece::fromLegacyCode(int $code)` | `?\shakmaty\Piece` | Decodes a legacy 12-code into a `Piece`; returns `null` for `NOPIECE` (7) and any invalid code. |
 
 ---
 
@@ -76,6 +78,28 @@ The table below shows all 12 possible pieces with their standard FEN/SAN charact
 | Black   | King     | `k`                | ♚             |
 
 > **Note:** The Unicode glyphs are for display only. Use `toChar()` when working with FEN, SAN, or UCI notation — those formats use the standard ASCII characters above.
+
+---
+
+## Legacy 12-code Encoding
+
+The extension can convert a `Piece` to and from the legacy 12-code integer (as used by `common\chess\Piece`):
+
+| Color | King | Queen | Rook | Bishop | Knight | Pawn |
+|-------|------|-------|------|--------|--------|------|
+| White | `1`  | `2`   | `3`  | `4`    | `5`    | `6`  |
+| Black | `9`  | `10`  | `11` | `12`   | `13`   | `14` |
+
+Encoding: `code = (color === BLACK ? 1 : 0) << 3 | (7 - role)`.
+Decoding: `role = 7 - (code & 7)`, `color = (code & 8) ? BLACK : WHITE`. The value `7` means **NOPIECE** (empty square).
+
+```php
+$wk = new \shakmaty\Piece(\shakmaty\Color::WHITE, \shakmaty\Role::KING);
+echo \shakmaty\Piece::legacyCode($wk->color, $wk->role); // 1
+
+$bp = \shakmaty\Piece::fromLegacyCode(14);              // Black Pawn ('p')
+$none = \shakmaty\Piece::fromLegacyCode(7);             // null (NOPIECE)
+```
 
 ---
 

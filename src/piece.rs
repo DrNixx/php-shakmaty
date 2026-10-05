@@ -95,4 +95,27 @@ impl PhpPiece {
         let color = if c.is_uppercase() { 1 } else { 0 };
         Some(PhpPiece { color, role })
     }
+
+    /// Converts a `Color` + `Role` pair to the legacy 12-code encoding.
+    ///
+    /// Encoding: `code = (color === BLACK ? 1 : 0) << 3 | (7 - role)`.
+    /// White gets 1..6 (King=1, Queen=2, Rook=3, Bishop=4, Knight=5, Pawn=6);
+    /// Black gets 9..14 (King=9, Queen=10, Rook=11, Bishop=12, Knight=13, Pawn=14).
+    pub fn legacy_code(color: &PhpColor, role: &PhpRole) -> i32 {
+        let color_bit = if color.inner == 0 { 1 } else { 0 };
+        (color_bit << 3) | (7 - role.inner as i32)
+    }
+
+    /// Creates a `Piece` from the legacy 12-code encoding.
+    ///
+    /// Valid codes are 1..6 (White) and 9..14 (Black). Returns `None` for the
+    /// legacy `NOPIECE` value (7) and for any other non-piece code.
+    pub fn from_legacy_code(code: i32) -> Option<Self> {
+        let typ = code & 7;
+        if !(1..=6).contains(&typ) {
+            return None;
+        }
+        let color = if (code & 8) != 0 { 0 } else { 1 };
+        Some(PhpPiece { color, role: (7 - typ) as u8 })
+    }
 }

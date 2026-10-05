@@ -48,4 +48,17 @@ $empty = \shakmaty\Board::empty();
 assert($empty->occupied()->isEmpty());
 assert($empty->pieceAt(\shakmaty\Square::E4) === null);
 
+// legacyPieceAt
+assert($board->legacyPieceAt(\shakmaty\Square::E1) === 1);   // White King
+assert($board->legacyPieceAt(\shakmaty\Square::D1) === 2);   // White Queen
+assert($board->legacyPieceAt(\shakmaty\Square::A1) === 3);   // White Rook
+assert($board->legacyPieceAt(\shakmaty\Square::B1) === 5);   // White Knight
+assert($board->legacyPieceAt(\shakmaty\Square::C1) === 4);   // White Bishop
+assert($board->legacyPieceAt(\shakmaty\Square::E2) === 6);   // White Pawn
+assert($board->legacyPieceAt(\shakmaty\Square::E8) === 9);   // Black King
+assert($board->legacyPieceAt(\shakmaty\Square::E7) === 14);  // Black Pawn
+assert($board->legacyPieceAt(\shakmaty\Square::E4) === 7);   // NOPIECE
+assert($empty->legacyPieceAt(\shakmaty\Square::E4) === 7);   // empty board
+assert($board->legacyPieceAt(99) === 7);                     // invalid square
+
 echo "Step 5: All board tests passed!\n";
